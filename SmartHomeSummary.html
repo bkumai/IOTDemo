@@ -81,7 +81,7 @@ rect.dimple-resident-2 {
 
      var svg2 = dimple.newSvg("#chartContainer", 590,600);
     
-     d3.tsv("CondolidatedData.tsv", function (data) { 
+     d3.tsv("data/CondolidatedData.tsv", function (data) { 
       var SingleDayData = data.filter(function(d) { return +d.Day ==1 ; })
       var myChart2 = new dimple.chart(svg2, SingleDayData);
       myChart2.setBounds(60,30, 500, 300)
