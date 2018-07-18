@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<style> 
+   #header {
+    background-color: #39393B;
+    text-align: center;
+    font-size:20px;
+    font-weight: bold;
+    padding: 0px 0px;
+    margin: 0px 0px;
+    color: white;
+
+}
+
+/* #reset #start {   padding:2 px;
+  width: 150px;
+ 
+  font-family: Helvetica, sans-serif;
+  font-size: 1em;
+/*  //margin: 0px 0px 10px 0px;
+  //border: 2px solid #ccc; */
+}*/
+ 
+    .RdYlBu .d6-1 {fill:#c7e9c0;background:#c7e9c0;color:#121212}
+    .RdYlBu .d6-2 {fill:#a1d99b;background:#a1d99b;color:#121212}
+    .RdYlBu .d6-3 {fill:#74c476;background:#74c476;color:#121212}
+    .RdYlBu .d6-4 {fill:#41ab5d;background:#41ab5d;color:#121212}
+    .RdYlBu .d6-5 {fill:#238b45;background:#238b45;color:#121212}
+    .RdYlBu .d6-6 {fill:#005a32;background:#005a32;color:#121212} 
+} </style>
+  <head>
+   
+    <title>Smart Home Analytics</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+   <script src="https://d3js.org/d3.v3.js"></script> 
+   <script src="data/d3.floorplan.min.js"></script>
+
+
+
+
+  </head>
+  <body > 
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark"  >
+
+<span class="navbar-text" id = "header">
+    <h4>Smart Home Analytics </h4>
+  </span>
+  <ul class="navbar-nav" style = "font-weight: bold">
+    <li class="nav-item">
+      <a class="nav-link" href="SmartHomeSummary.html">| Summary |</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="ActivityLineChart.html">| Activity Analysis |</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="floorplan_animated.html">| Motion Trajectory |</a>
+    </li>
+        <li class="nav-item">
+      <a class="nav-link" href="Heatmap.html">| Activity Patern |</a>
+    </li>
+  </ul>
+
+ </nav>
+  
+  <div class="container" >
+
+  <div class="row">
+  <div class="col-sm-8" id = "demo"> </div>
+  <div class="col-sm-4">
+  
+
+  <div class = "container">
+  <br><br>
+  <button type="button" class="btn btn-primary" id = "start">View 24 hr Trajectory</button>
+  <br><br>
+  <button type="button" class="btn btn-primary" id = "reset">Reset</button>
+  </div>
+
+   </div>
+   
+
+  </div>
+  </div>
+
+</div>
+ 
+
+
+  <div class="container" >
+
+ </div>
+
+  
+<script type = 'text/javascript'> 
+
+  var jsonData = 
+ {
+heatmap: {
+binSize: 2.5,
+units: "Minutes",
+map: [
+ {
+   "x": 36.65625,
+   "y": 21.9765625,
+   "value": 3
+ },
+ {
+   "x": 44.36328125,
+   "y": 23.2421875,
+   "value": 0
+ },
+ {
+   "x": 44.02734375,
+   "y": 5.77734375,
+   "value": 2
+ },
+ {
+   "x": 47.8125,
+   "y": 15.33984375,
+   "value": 776
+ },
+ {
+   "x": 44.88671875,
+   "y": 22.70703125,
+   "value": 43
+ },
+ {
+   "x": 42.8984375,
+   "y": 16.46875,
+   "value": 202
+ },
+ {
+   "x": 40.109375,
+   "y": 18.79296875,
+   "value": 164
+ },
+ {
+   "x": 18.0625,
+   "y": 4.71484375,
+   "value": 9
+ },
+ {
+   "x": 10.29296875,
+   "y": 4.84765625,
+   "value": 1
+ },
+ {
+   "x": 15.140625,
+   "y": 20.91796875,
+   "value": 0
+ },
+ {
+   "x": 24.0390625,
+   "y": 12.6171875,
+   "value": 9
+ },
+ {
+   "x": 29.81640625,
+   "y": 10.69140625,
+   "value": 2
+ },
+ {
+   "x": 19.390625,
+   "y": 10.625,
+   "value": 37
+ },
+ {
+   "x": 22.3125,
+   "y": 23.2421875,
+   "value": 2
+ },
+ {
+   "x": 36.58984375,
+   "y": 10.95703125,
+   "value": 3
+ },
+ {
+   "x": 9.03125,
+   "y": 10.625,
+   "value": 26
+ },
+ {
+   "x": 23.57421875,
+   "y": 15.47265625,
+   "value": 2
+ },
+ {
+   "x": 24.3046875,
+   "y": 19.125,
+   "value": 19
+ },
+ {
+   "x": 13.34765625,
+   "y": 5.11328125,
+   "value": 208
+ },
+ {
+   "x": 7.4375,
+   "y": 21.3828125,
+   "value": 314
+ }
+],
+} };
+
+
+ var xscale = d3.scale.linear()
+               .domain([0,54.12])
+               .range([0, 720]),
+    yscale = d3.scale.linear()
+               .domain([0,34])
+               .range([0,487]),
+    map = d3.floorplan().xScale(xscale).yScale(yscale),
+    imagelayer = d3.floorplan.imagelayer(),
+    heatmap = d3.floorplan.heatmap(),
+    mapdata = {};
+
+    var svg = d3.select("#demo").append("svg")
+    .attr("height", 487).attr("width",720);
+   
+
+  mapdata[imagelayer.id()] = [{
+   // url: 'Sample_Floorplan.jpg',
+    url: 'data/FloorPlan_HouseA_Sensor_Removed.jpg',
+    x: 0,
+    y: 0,
+    height: 34,
+    width: 54.12,
+     }];
+
+   map.addLayer(imagelayer)
+   .addLayer(heatmap)  
+   ;
+
+  //d3.json("demo-data.json", function(error,data) 
+
+  var loadData = function (data) {
+  // if(error) console.log("error fetching data");
+    mapdata[heatmap.id()] = data.heatmap;
+	  svg.datum(mapdata).call(map);
+}; 
+  loadData(jsonData);
+
+    ;
+
+   var xMap = [], yMap =  [];
+   
+   d3.tsv("data/SensorMapping.tsv", function(data) {
+
+    data.forEach( function (d,i) {
+
+      xMap[i] = +d.x;
+      yMap[i] = +d.y;
+    })
+    });
+
+  d3.select("#start").on("click", function() {
+    svg.select(".heatmap").remove();
+    svg.select("#timer").remove();
+    svg.select("#icon").remove();
+
+
+    var timer = svg.append("text")
+    .attr("id", "timer")
+    .attr("height",100)
+    .attr("width",100)
+    .attr("x", 20)
+    .attr("y", 20)
+    .style("fill","black")
+    .style("font-size","15px")
+    .text("");
+
+    var timer0 = timer
+    .transition()
+    .delay(50)
+    .duration(50) ;
+
+
+    d3.tsv("data/R1_DAY1_SENSOR.tsv", function(data)
+    {
+    //   // path creation 
+      var  valueline = d3.svg.line()
+      .x(function(d) { return xscale (xMap[d.ActiveSensor])  ; })
+      .y(function(d) { return yscale (yMap[d.ActiveSensor])  ; });
+      
+       var path = svg.append("path")
+                  .datum(data)
+                  .attr("class", "activityPath")
+                  .attr("fill","none")
+                  .attr("stroke","red")
+                  .attr("stroke-width", "1px")
+                  .attr("d", valueline);
+
+  
+    // Variable to Hold Total Length
+    var totalLength = path.node().getTotalLength();
+
+    // Set Properties of Dash Array and Dash Offset and initiate Transition
+    path
+      .attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+    .transition() // Call Transition Method
+      .duration(2000) // Set Duration timing (ms)
+       //.ease(d3.easeLinearIn) // Set Easing option
+      .attr("stroke-dashoffset", 0); // Set final value of dash-offset for transition
+
+     
+   });
+    });
+
+
+  d3.select("#reset").on("click", function(t0) {
+     
+  
+  svg.select(".map-layers").remove();
+  svg.select("#timer").remove();
+    svg.select("#icon").remove();
+  loadData(jsonData);
+  });
+
+
+
+</script>
+</body>
+</html>

@@ -32,7 +32,6 @@ rect.dimple-resident-2 {
 </head>
 <body>
 
-
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark"  >
 
 <span class="navbar-text" id = "header">
@@ -44,13 +43,13 @@ rect.dimple-resident-2 {
       <a class="nav-link" href="SmartHomeSummary.html">| Summary |</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="ActivityLineChartv4.html">| Activity Analysis |</a>
+      <a class="nav-link" href="ActivityLineChartv.html">| Activity Analysis |</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="floorplan_animatedv3.html">| Motion Trajectory |</a>
+      <a class="nav-link" href="floorplan_animated.html">| Motion Trajectory |</a>
     </li>
         <li class="nav-item">
-      <a class="nav-link" href="Heatmap1.html">| Activity Patern |</a>
+      <a class="nav-link" href="Heatmap.html">| Activity Patern |</a>
     </li>
   </ul>
 
@@ -96,7 +95,7 @@ rect.dimple-resident-2 {
 
         var svg3 = dimple.newSvg("#chartContainer", 590, 300);
     
-    d3.tsv("data/DAY_1summary2.tsv", function (data) {
+    d3.tsv("data/DAY_1summary.tsv", function (data) {
       var myChart3 = new dimple.chart(svg3, data);
       myChart3.setBounds(200,30, 250, 250)
       // x.addOrderRule("Date");
