@@ -1,0 +1,301 @@
+Day	ActNo	Activity	Count
+1	1	Going Out	23253
+1	2	Sleep	27267
+1	3	Internet	7848
+1	4	Watch TV	6485
+1	5	Study	6343
+1	6	Other	1527
+1	7	Food 	8122
+1	8	Cleaning	1217
+1	9	Leisure	2516
+1	10	Hygeine	1822
+2	1	Going Out	17829
+2	2	Sleep	26158
+2	3	Internet	12908
+2	4	Watch TV	5798
+2	5	Study	8794
+2	6	Other	1949
+2	7	Food 	6229
+2	8	Cleaning	1077
+2	9	Leisure	1573
+2	10	Hygeine	4085
+3	1	Going Out	3525
+3	2	Sleep	27304
+3	3	Internet	12455
+3	4	Watch TV	14721
+3	5	Study	1694
+3	6	Other	2016
+3	7	Food 	10500
+3	8	Cleaning	1372
+3	9	Leisure	8537
+3	10	Hygeine	4276
+4	1	Going Out	0
+4	2	Sleep	35346
+4	3	Internet	6519
+4	4	Watch TV	11204
+4	5	Study	17352
+4	6	Other	1433
+4	7	Food 	5484
+4	8	Cleaning	1065
+4	9	Leisure	5345
+4	10	Hygeine	2652
+5	1	Going Out	5078
+5	2	Sleep	26859
+5	3	Internet	8866
+5	4	Watch TV	12749
+5	5	Study	10275
+5	6	Other	1203
+5	7	Food 	6648
+5	8	Cleaning	1593
+5	9	Leisure	8687
+5	10	Hygeine	4442
+6	1	Going Out	0
+6	2	Sleep	29683
+6	3	Internet	13649
+6	4	Watch TV	11338
+6	5	Study	7419
+6	6	Other	4550
+6	7	Food 	8745
+6	8	Cleaning	2626
+6	9	Leisure	4303
+6	10	Hygeine	4087
+7	1	Going Out	13392
+7	2	Sleep	27181
+7	3	Internet	12971
+7	4	Watch TV	15322
+7	5	Study	0
+7	6	Other	1769
+7	7	Food 	4394
+7	8	Cleaning	2399
+7	9	Leisure	7196
+7	10	Hygeine	1776
+8	1	Going Out	5884
+8	2	Sleep	28596
+8	3	Internet	7367
+8	4	Watch TV	14411
+8	5	Study	9916
+8	6	Other	546
+8	7	Food 	5352
+8	8	Cleaning	748
+8	9	Leisure	8626
+8	10	Hygeine	4954
+9	1	Going Out	0
+9	2	Sleep	28311
+9	3	Internet	13106
+9	4	Watch TV	10653
+9	5	Study	13169
+9	6	Other	3780
+9	7	Food 	8194
+9	8	Cleaning	1236
+9	9	Leisure	3238
+9	10	Hygeine	4713
+10	1	Going Out	20592
+10	2	Sleep	29395
+10	3	Internet	3229
+10	4	Watch TV	6122
+10	5	Study	0
+10	6	Other	2086
+10	7	Food 	5555
+10	8	Cleaning	4009
+10	9	Leisure	10819
+10	10	Hygeine	4593
+11	1	Going Out	13638
+11	2	Sleep	25427
+11	3	Internet	13308
+11	4	Watch TV	9500
+11	5	Study	4685
+11	6	Other	351
+11	7	Food 	8833
+11	8	Cleaning	1171
+11	9	Leisure	4654
+11	10	Hygeine	4833
+12	1	Going Out	8855
+12	2	Sleep	27978
+12	3	Internet	7759
+12	4	Watch TV	12167
+12	5	Study	8476
+12	6	Other	2011
+12	7	Food 	11341
+12	8	Cleaning	1582
+12	9	Leisure	3760
+12	10	Hygeine	2471
+13	1	Going Out	12811
+13	2	Sleep	30563
+13	3	Internet	6941
+13	4	Watch TV	13855
+13	5	Study	6548
+13	6	Other	826
+13	7	Food 	5937
+13	8	Cleaning	801
+13	9	Leisure	3034
+13	10	Hygeine	5084
+14	1	Going Out	11907
+14	2	Sleep	24083
+14	3	Internet	15685
+14	4	Watch TV	10837
+14	5	Study	0
+14	6	Other	3185
+14	7	Food 	5691
+14	8	Cleaning	1658
+14	9	Leisure	6946
+14	10	Hygeine	6408
+15	1	Going Out	13184
+15	2	Sleep	30882
+15	3	Internet	10267
+15	4	Watch TV	4554
+15	5	Study	0
+15	6	Other	2513
+15	7	Food 	6187
+15	8	Cleaning	1373
+15	9	Leisure	12992
+15	10	Hygeine	4448
+16	1	Going Out	14029
+16	2	Sleep	28714
+16	3	Internet	1850
+16	4	Watch TV	14287
+16	5	Study	0
+16	6	Other	327
+16	7	Food 	3954
+16	8	Cleaning	1016
+16	9	Leisure	17991
+16	10	Hygeine	4232
+17	1	Going Out	435
+17	2	Sleep	28541
+17	3	Internet	11141
+17	4	Watch TV	9555
+17	5	Study	716
+17	6	Other	1144
+17	7	Food 	9262
+17	8	Cleaning	3159
+17	9	Leisure	17168
+17	10	Hygeine	5279
+18	1	Going Out	422
+18	2	Sleep	27633
+18	3	Internet	8549
+18	4	Watch TV	12021
+18	5	Study	17827
+18	6	Other	1430
+18	7	Food 	9768
+18	8	Cleaning	1541
+18	9	Leisure	3928
+18	10	Hygeine	3281
+19	1	Going Out	4728
+19	2	Sleep	26695
+19	3	Internet	17246
+19	4	Watch TV	8555
+19	5	Study	1519
+19	6	Other	3215
+19	7	Food 	7803
+19	8	Cleaning	3083
+19	9	Leisure	7834
+19	10	Hygeine	5722
+20	1	Going Out	8421
+20	2	Sleep	29268
+20	3	Internet	10751
+20	4	Watch TV	14336
+20	5	Study	3616
+20	6	Other	922
+20	7	Food 	8081
+20	8	Cleaning	1539
+20	9	Leisure	5983
+20	10	Hygeine	3483
+21	1	Going Out	4214
+21	2	Sleep	27170
+21	3	Internet	9450
+21	4	Watch TV	12044
+21	5	Study	6237
+21	6	Other	4469
+21	7	Food 	6639
+21	8	Cleaning	1856
+21	9	Leisure	10732
+21	10	Hygeine	3589
+22	1	Going Out	32352
+22	2	Sleep	26690
+22	3	Internet	0
+22	4	Watch TV	11056
+22	5	Study	0
+22	6	Other	618
+22	7	Food 	2441
+22	8	Cleaning	823
+22	9	Leisure	9831
+22	10	Hygeine	2589
+23	1	Going Out	18595
+23	2	Sleep	29082
+23	3	Internet	3355
+23	4	Watch TV	14126
+23	5	Study	0
+23	6	Other	2611
+23	7	Food 	6084
+23	8	Cleaning	1461
+23	9	Leisure	7151
+23	10	Hygeine	3935
+24	1	Going Out	16938
+24	2	Sleep	28068
+24	3	Internet	17445
+24	4	Watch TV	7785
+24	5	Study	0
+24	6	Other	2454
+24	7	Food 	5331
+24	8	Cleaning	1354
+24	9	Leisure	3580
+24	10	Hygeine	3445
+25	1	Going Out	6595
+25	2	Sleep	27103
+25	3	Internet	16403
+25	4	Watch TV	6086
+25	5	Study	0
+25	6	Other	497
+25	7	Food 	12612
+25	8	Cleaning	1111
+25	9	Leisure	14041
+25	10	Hygeine	1952
+26	1	Going Out	3061
+26	2	Sleep	28723
+26	3	Internet	10580
+26	4	Watch TV	12014
+26	5	Study	2748
+26	6	Other	2925
+26	7	Food 	6032
+26	8	Cleaning	906
+26	9	Leisure	15686
+26	10	Hygeine	3725
+27	1	Going Out	34056
+27	2	Sleep	29071
+27	3	Internet	2769
+27	4	Watch TV	3130
+27	5	Study	0
+27	6	Other	5389
+27	7	Food 	4730
+27	8	Cleaning	1363
+27	9	Leisure	1459
+27	10	Hygeine	4433
+28	1	Going Out	21171
+28	2	Sleep	32422
+28	3	Internet	2820
+28	4	Watch TV	1663
+28	5	Study	10111
+28	6	Other	2159
+28	7	Food 	8088
+28	8	Cleaning	1150
+28	9	Leisure	5482
+28	10	Hygeine	1334
+29	1	Going Out	10975
+29	2	Sleep	32066
+29	3	Internet	12279
+29	4	Watch TV	8897
+29	5	Study	0
+29	6	Other	1377
+29	7	Food 	7230
+29	8	Cleaning	1850
+29	9	Leisure	7368
+29	10	Hygeine	4358
+30	1	Going Out	19069
+30	2	Sleep	27077
+30	3	Internet	12171
+30	4	Watch TV	8142
+30	5	Study	0
+30	6	Other	706
+30	7	Food 	9125
+30	8	Cleaning	2097
+30	9	Leisure	2645
+30	10	Hygeine	5368
