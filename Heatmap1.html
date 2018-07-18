@@ -1,0 +1,225 @@
+  <!DOCTYPE html>
+  <meta charset="utf-8">
+  <style> /* set the CSS */
+    #header {
+    background-color: #39393B;
+    text-align: center;
+    font-size:20px;
+    font-weight: bold;
+    padding: 0px 0px;
+    margin: 0px 0px;
+    color: white;
+
+}
+
+   .axis path,
+    .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+        font-family: sans-serif;
+        font-size: 11px;
+    }
+
+    .pca_axis path,
+    .pca_axis line {
+      fill: none;
+      stroke: none;
+      shape-rendering: crispEdges;
+    }
+
+    .pca_axis text {
+        font-family: sans-serif;
+        font-size: 11px;
+        font-weight: bold;
+    }
+  </style>
+ <head> 
+ <title>Smart Home Analytics</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+
+ <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+   
+</head>
+  <body>
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark"  >
+
+<span class="navbar-text" id = "header">
+    <h4>Smart Home Analytics </h4>
+  </span>
+  <!-- Links -->
+  <ul class="navbar-nav" style = "font-weight: bold">
+    <li class="nav-item">
+      <a class="nav-link" href="SmartHomeSummary.html">| Summary |</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="ActivityLineChartv4.html">| Activity Analysis |</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="floorplan_animatedv3.html">| Motion Trajectory |</a>
+    </li>
+        <li class="nav-item">
+      <a class="nav-link" href="Heatmap1.html">| Activity Patern |</a>
+    </li>
+  </ul>
+
+ </nav>
+ 
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9">
+     
+      <div class="heatmap"></div>
+
+      </div>
+      <div class="col-sm-3">
+      <div class="heatmap2"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- load the d3.js library -->     
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script>
+
+    var itemSize = 22,
+        cellSize = itemSize - 1,
+        margin = {top: 120, right: 20, bottom: 20, left: 110};
+        
+    var width = 900 - margin.right - margin.left,
+        height = 800 - margin.top - margin.bottom;
+
+    //This function creates the main chart 
+
+    d3.tsv( "data/ACTIVITY_COUNT_MATRIX_4.tsv", function (error, data) { 
+
+      var x_elements = d3.set(data.map(function( item ) { return item.Day; } )).values(), 
+          y_elements = d3.set(data.map(function( item ) { return item.Activity; } )).values();
+        
+     
+      var xScale = d3.scaleBand()
+                      .domain(x_elements)
+                      .rangeRound([0, ( x_elements.length +1 )* itemSize]);
+
+      var xAxis = d3.axisTop(xScale)
+                    .tickFormat(function (d) { return "Day "+ d;})
+        
+      var yScale = d3.scaleBand()
+                     .domain(y_elements)
+                      .rangeRound([0, y_elements.length * itemSize]);
+
+      var yAxis = d3.axisLeft(yScale)
+                      .tickFormat(function (d) {  return d;})
+         
+      var colorScale = d3.scaleLinear()
+                         .domain([0, 20000])
+                         .range(["white", "purple"])
+                         .interpolate(d3.interpolateLab);
+
+      var svg = d3.select('.heatmap')
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      var cells = svg.selectAll('rect')
+          .data(data)
+          .enter().append('g').append('rect')
+          .attr('class', 'cell')
+          .attr('width', cellSize)
+          .attr('height', cellSize)
+          .attr('x', function(d) { return xScale(d.Day); })
+          .attr('y', function(d) { return yScale(d.Activity); })
+          .attr('fill', function(d) { return colorScale(d.Count); });
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+          .selectAll('text')
+          .attr('font-weight', 'normal');
+
+      svg.append("g")
+          .attr("class", "x axis")
+          .call(xAxis)
+          .selectAll('text')
+          .attr('font-weight', 'normal')
+          .style("text-anchor", "start")
+          .attr("dx", ".8em")
+          .attr("dy", ".5em")
+          .attr("transform", function (d) {
+              return "rotate(-65)";
+           })
+
+        })
+
+// This function creates the PCA heat map 
+
+    d3.tsv( "data/PCA_Activity.tsv", function (error, data) { 
+
+      var x_elements = ["1"], 
+          y_elements = d3.set(data.map(function( item ) { return item.Activity; } )).values();
+     
+      var xScale = d3.scaleBand()
+                     .domain([1,1])
+                     .rangeRound([0, ( x_elements.length +1 )* itemSize]);
+
+      var xAxis = d3.axisTop(xScale)
+                    .tickFormat(function (d) { return "Projected Daily Pattern"})
+
+      var yScale = d3.scaleBand()
+                     .domain(y_elements)
+                     .rangeRound([0, y_elements.length * itemSize]);
+
+      var colorScale = d3.scaleLinear()
+                      //.domain( d3.extent(data, function(d) { return d.Count; }) )
+                      .domain( [-38000, 70000])
+                      .range(["white", "purple"])
+                      .interpolate(d3.interpolateLab);
+
+      var svg = d3.select('.heatmap2')
+          .append("svg")
+          // .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + ( margin.left -50) + "," + margin.top + ")");
+
+      var cells = svg.selectAll('rect')
+          .data(data)
+          .enter().append('g').append('rect')
+          .attr('class', 'cell')
+          .attr('width', cellSize*2)
+          .attr('height', cellSize)
+          .attr('x', function(d) { return xScale(1); })
+          .attr('y', function(d) { return yScale(d.Activity); })
+          .attr('fill', function(d) { return colorScale(d.Count); });
+
+          svg.append("g")
+            .attr("class", "pca_axis")
+            .call(xAxis)
+            .selectAll('text')
+            .attr('font-weight', 'normal')
+            .style("text-anchor", "start")
+            .attr("dx", "-5em")
+            .attr("dy", "-1.5em")
+            .attr("transform", function (d) {
+                return ;//"rotate(-65)";
+
+             })
+
+        })
+
+  </script>
+
+
+  </body>
