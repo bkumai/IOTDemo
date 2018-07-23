@@ -20,16 +20,18 @@ rect.dimple-resident-2 {
 </style>
 <head>
   <title>Smart Home Analytics</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/crossfilter.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "css/dc.css"/>
+    <script src = "js/dc.min.js"></script>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="data/dimple.v2.3.0.min.js"></script>
-   
-</head>
+  </head>
 <body>
 
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark"  >
@@ -55,56 +57,158 @@ rect.dimple-resident-2 {
 
  </nav>
 
-<div class="container-fluid" id="chartContainer">
-  
+ <div class="container-fluid">
+     <div class="row  align-items-center justify-content-center">
+        <div class="col-lg-9" >
+          <div class="row align-items-center justify-content-center" ><h6>Activity Time Use Summary</h6></div>
+          <div class="row align-items-center justify-content-center" id = "activityChart" ></div>
+          <div class="row align-items-center justify-content-center" id = "dateRangeChart"></div>
+        </div>
+        <div class="col-sm-2" >
+            <div class = "row  align-items-center justify-content-center" >
+            <a href = "javascript:dc.filterAll(); dc.renderAll();" ><h6>   Reset All</h6></a>
+            </div>
+             <div class = "row align-items-center justify-content-center" id ="house"> <h6> House</h6> </div>   
+            <div class = "row align-items-center justify-content-center" id = "resident"><h6> Resident</h6></div>   
+            <div class = "row align-items-center justify-content-center" id = "dayofweek"><h6> Day of Week</h6></div>   
+        </div>   
+        </div>
+
+  </div>
 
    <script type="text/javascript">
   
-    var svg = dimple.newSvg("#chartContainer", 590,600);
-    
-      d3.tsv("data/CondolidatedData.tsv", function (data) { 
-      
-      var myChart = new dimple.chart(svg, data);
-      myChart.setBounds(60,30, 500, 300)
-      myChart.addCategoryAxis("x", ["Day", "Resident"]);
-      //x.addOrderRule("Date");
-      myChart.addMeasureAxis("y", "Minutes");
-      myChart.addSeries("Activity", dimple.plot.bar);
-      myChart.addLegend(60, 10, 510, 20, "right");
-     // myChart.x.title = 'Daily Activity Profile for Residents 1 & 2'
-      myChart.draw();
+        var dateRangeChart = dc.barChart('#dateRangeChart'); // , 'myChartGroup');
+        var barChart = dc.barChart('#activityChart'); // , 'myChartGroup');
+        var pieChartHouse = dc.pieChart('#house'); //, 'myChartGroup');
+         var pieChartResident = dc.pieChart('#resident');
+         var pieChartDayofWeek = dc.pieChart('#dayofweek');
+
+         d3.csv("data/ARAS_Activity_Data.csv", function(errors, ARAS_Activity) {
+            
+            var dayofWeek = ["Sun","Mon","Tue","Wed","Thur","Fri","Sat"] ;
+            var ActivityName = ["0","Going Out","Sleep","Internet","TV","Study","Other","Food","Cleaning","Leisure","Hygiene"] ;
+       
+            ARAS_Activity.forEach(function(data) {
+            data.date = parseDate( date_convert(data.Day) );
+            data.activityduration = 1 ;
+            data.dayofWeek = dayofWeek[data.date.getDay() ];
+            data.Activity = ActivityName[ data.Activity ]  ;// Use Names instead of code 
+            
+           }); 
+
+            var mycrossfilter = crossfilter(ARAS_Activity);
+
+           // House dimension
+            var houseDimension = mycrossfilter.dimension(function(data) { 
+               return data.House ;
+            });
+            var houseGroup = houseDimension.group();
+
+//            Resident dimension
+            var residentDimension = mycrossfilter.dimension(function(data) { 
+               return data.Resident; 
+            });
+            var residentGroup = residentDimension.group();
+
+         
+         // Day dimension
+            var dayDimension = mycrossfilter.dimension(function(data) { 
+               return data.date ;
+            });
+            var dayGroup = dayDimension.group() ;
+
+            // Activity dimension
+            var activityDimension = mycrossfilter.dimension(function(data) { 
+               return data.Activity; 
+            });
+            var activityGroup = activityDimension.group().reduceSum( function(d){ return d.activityduration/60;});;
+
+                     // DayofWeek dimension
+            var dayofweekDimension = mycrossfilter.dimension(function(data) { 
+               return data.dayofWeek ;
+            });
+            var dayofweekGroup = dayofweekDimension.group() ;
+
+         barChart
+            .width(850)
+            .height(350)
+            .x(d3.scaleBand() )
+            .xUnits(dc.units.ordinal)
+            .yAxisLabel("Hours")
+            .elasticY(true)
+            .elasticX(true)
+            .dimension(activityDimension)
+            .group(activityGroup);
+
+         var minDate = dayDimension.bottom(1)[0].date;
+         var maxDate = dayDimension.top(1)[0].date; 
+         var numberofTicks = (maxDate-minDate)/(24*60*60*1000) +1   // convert time to miliseconds and find days elapsed. No of ticks is a multiple of 30  
+
+
+         dateRangeChart
+            .width(850)
+            .height(60)
+            .x(d3.scaleTime().domain([minDate,maxDate]))
+            .xAxisLabel( "Select Date Range")
+            .elasticX(true)
+            .dimension(dayDimension)
+            .group(dayGroup)
+            .yAxis().ticks(0)
+            //.xAxis().ticks(30);
+
+
+            // var xscale = d3.scaleTime()
+            //     .domain( [parseTime( time_convert(0)),parseTime( time_convert(1440))] )
+            //     .range([0, width]);
+
+
+         pieChartResident
+            .width(250)
+            .height(140)
+            .innerRadius(30)
+            .dimension(residentDimension)
+            .group(residentGroup);
+
+
+         pieChartHouse
+            .width(250)
+            .height(140)
+            .innerRadius(30)
+            .dimension(houseDimension)
+            .group(houseGroup);
+
+
+         pieChartDayofWeek
+            .width(250)
+            .height(140)
+            .innerRadius(30)
+            .dimension(dayofweekDimension)
+            .group(dayofweekGroup);
+
+         // pieChartResident.render();
+          dc.renderAll();
       });
 
+        var parseDate = d3.timeParse("%Y%m%d") ;
+        
 
-     // second chart 
+        var parseTime = d3.timeParse("%Y%m%d %H:%M");
 
-     var svg2 = dimple.newSvg("#chartContainer", 590,600);
-    
-     d3.tsv("data/CondolidatedData.tsv", function (data) { 
-      var SingleDayData = data.filter(function(d) { return +d.Day ==1 ; })
-      var myChart2 = new dimple.chart(svg2, SingleDayData);
-      myChart2.setBounds(60,30, 500, 300)
-      myChart2.addCategoryAxis("x", ["Activity", "Resident"]);
-      //x.addOrderRule("Date");
-      myChart2.addMeasureAxis("y", "Minutes");
-      myChart2.addSeries("Resident", dimple.plot.bar);
-      myChart2.addLegend(60, 10, 510, 20, "right");
+        function time_convert(day, minute)
+          { 
+           const hours = Math.floor(minute / 60);  
+           const minutes = minute % 60;
+           const date = "201804"+day;
+           return `${date} ${hours}:${minutes}`;         
+         };
 
-      myChart2.draw();
-      });
-
-        var svg3 = dimple.newSvg("#chartContainer", 590, 300);
-    
-    d3.tsv("data/DAY_1summary.tsv", function (data) {
-      var myChart3 = new dimple.chart(svg3, data);
-      myChart3.setBounds(200,30, 250, 250)
-      // x.addOrderRule("Date");
-      myChart3.addMeasureAxis("p", "Minutes");
-      myChart3.addSeries("Activity", dimple.plot.pie);
-      myChart3.addLegend(500, 20, 90, 300, "left");
-      myChart3.draw();
-    });
-
+         function date_convert(day)
+          { 
+           const date = "201804"+day;
+           return `${date}`;         
+         };
+     
   </script>
 </div>
 
