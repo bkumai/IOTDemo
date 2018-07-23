@@ -13,10 +13,6 @@
 
 }
 
-
-rect.dimple-resident-2 {
-  fill: red;
-}
 </style>
 <head>
   <title>Smart Home Analytics</title>
@@ -63,6 +59,7 @@ rect.dimple-resident-2 {
           <div class="row align-items-center justify-content-center" ><h6>Activity Time Use Summary</h6></div>
           <div class="row align-items-center justify-content-center" id = "activityChart" ></div>
           <div class="row align-items-center justify-content-center" id = "dateRangeChart"></div>
+           <div class = "row align-items-center justify-content-center" id = "timeRangeChart" style ="height:100"></div>   
         </div>
         <div class="col-sm-2" >
             <div class = "row  align-items-center justify-content-center" >
@@ -71,6 +68,7 @@ rect.dimple-resident-2 {
              <div class = "row align-items-center justify-content-center" id ="house"> <h6> House</h6> </div>   
             <div class = "row align-items-center justify-content-center" id = "resident"><h6> Resident</h6></div>   
             <div class = "row align-items-center justify-content-center" id = "dayofweek"><h6> Day of Week</h6></div>   
+
         </div>   
         </div>
 
@@ -79,6 +77,7 @@ rect.dimple-resident-2 {
    <script type="text/javascript">
   
         var dateRangeChart = dc.barChart('#dateRangeChart'); // , 'myChartGroup');
+        var timeRangeChart = dc.barChart('#timeRangeChart'); 
         var barChart = dc.barChart('#activityChart'); // , 'myChartGroup');
         var pieChartHouse = dc.pieChart('#house'); //, 'myChartGroup');
          var pieChartResident = dc.pieChart('#resident');
@@ -94,6 +93,7 @@ rect.dimple-resident-2 {
             data.activityduration = 1 ;
             data.dayofWeek = dayofWeek[data.date.getDay() ];
             data.Activity = ActivityName[ data.Activity ]  ;// Use Names instead of code 
+            data.Minute = parseTime ( time_convert( data.Minute));
             
            }); 
 
@@ -130,12 +130,18 @@ rect.dimple-resident-2 {
             });
             var dayofweekGroup = dayofweekDimension.group() ;
 
+                     // Time of day 
+            var timeofdayDimension = mycrossfilter.dimension(function(data) { 
+               return data.Minute ;
+            });
+            var timeofdayGroup = timeofdayDimension.group() ;
+
          barChart
             .width(850)
-            .height(350)
+            .height(330)
             .x(d3.scaleBand() )
             .xUnits(dc.units.ordinal)
-            .yAxisLabel("Hours")
+            .yAxisLabel("Total Hours")
             .elasticY(true)
             .elasticX(true)
             .dimension(activityDimension)
@@ -148,20 +154,34 @@ rect.dimple-resident-2 {
 
          dateRangeChart
             .width(850)
-            .height(60)
+            .height(70)
             .x(d3.scaleTime().domain([minDate,maxDate]))
-            .xAxisLabel( "Select Date Range")
+            .ordinalColors( ["white"]  )
+            .xAxisLabel( "select date range")
             .elasticX(true)
             .dimension(dayDimension)
             .group(dayGroup)
-            .yAxis().ticks(0)
-            //.xAxis().ticks(30);
+            .yAxis().ticks(0);
 
-
-            // var xscale = d3.scaleTime()
+         //s dateRangeChart.xAxis().ticks(0)
+           
+                       // var xscale = d3.scaleTime()
             //     .domain( [parseTime( time_convert(0)),parseTime( time_convert(1440))] )
             //     .range([0, width]);
 
+         timeRangeChart
+            .width(850)
+            .height(70)
+            .x(d3.scaleTime().domain([timeofdayDimension.bottom(1)[0].Minute, timeofdayDimension.bottom(1)[0].Minute]))
+            .ordinalColors( ["white"]  )
+            .xAxisLabel( "select time of day range")
+            .elasticX(true)
+            .dimension(timeofdayDimension)
+            .group(timeofdayGroup)
+            .yAxis().ticks(0)
+           ;
+
+           timeRangeChart.xAxis().ticks(12).tickFormat(d3.timeFormat("%I %p"));
 
          pieChartResident
             .width(250)
@@ -193,14 +213,13 @@ rect.dimple-resident-2 {
         var parseDate = d3.timeParse("%Y%m%d") ;
         
 
-        var parseTime = d3.timeParse("%Y%m%d %H:%M");
+        var parseTime = d3.timeParse("%H:%M");
 
-        function time_convert(day, minute)
+        function time_convert( minute)
           { 
            const hours = Math.floor(minute / 60);  
            const minutes = minute % 60;
-           const date = "201804"+day;
-           return `${date} ${hours}:${minutes}`;         
+           return `${hours}:${minutes}`;         
          };
 
          function date_convert(day)
