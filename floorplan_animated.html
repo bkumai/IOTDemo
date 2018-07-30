@@ -40,6 +40,7 @@
     <script type="text/javascript" src="js/crossfilter.min.js"></script>
     <script src="https://d3js.org/d3.v3.min.js"></script>
    <script src="data/d3.floorplan.min.js"></script>
+     <!-- <script src="js/d3.slider.js"></script> -->
 
 
 
@@ -81,7 +82,9 @@
   <br><br>
   <button type="button" class="btn btn-primary" id = "reset">Reset</button>
   </div>
-
+  <div class = "row" id = "slider1"> </div>
+  
+  </div>
    </div>
    
 
@@ -259,6 +262,11 @@ map: [
     })
     });
 
+
+    // d3.select('#slider1').call(d3.slider());
+
+ //  d3.select("#slider").call(d3.slider());
+
   d3.select("#start").on("click", function() {
     svg.select(".heatmap").remove();
 
@@ -267,31 +275,6 @@ map: [
     d3.tsv("data/R1_DAY1_SENSOR.tsv", function(data)
     {
     //   // path creation 
-      var  valueline = d3.svg.line()
-      .x(function(d) { return xscale (xMap[d.ActiveSensor])  ; })
-      .y(function(d) { return yscale (yMap[d.ActiveSensor])  ; });
-      
-      var path = svg.append("path")
-                  .datum(data)
-                  .attr("class", "activityPath")
-                  .attr("fill","none")
-                  .attr("stroke","brown")
-                  .attr("stroke-width", "1px")
-                  .attr("d", valueline);
-
-  
-    // Variable to Hold Total Length
-    var totalLength = path.node().getTotalLength();
-
-    // Set Properties of Dash Array and Dash Offset and initiate Transition
-    path
-      .attr("stroke-dasharray", totalLength + " " + totalLength)
-      .attr("stroke-dashoffset", totalLength)
-    .transition() // Call Transition Method
-      .duration(100000) // Set Duration timing (ms)
-      .ease("linear") // Set Easing option
-      .attr("stroke-dashoffset", 0); // Set final value of dash-offset for transition
-
 
       var ActiveSensor = [];
 
@@ -316,8 +299,9 @@ map: [
               .attr("y", yscale (yMap[ActiveSensor[0]]) ) ; 
 
   /// circle transition 
-     for( var i = 1; i <= 1398; i++) {
-      debugger;
+     for( var i = 1; i <= data.length -2 ; i++) {
+
+
      // circle transition  
        circle= circle.transition()
               //.delay(1000)
@@ -332,9 +316,39 @@ map: [
               .duration(20)
               .attr("x",  xscale (xMap[ActiveSensor[i]]) )
               .attr("y", yscale (yMap[ActiveSensor[i]]) );
-         } ;    
-     
+         
+      
+
+        // path transition
+      var  valueline = "M" +  xscale( xMap[ActiveSensor[i-1]])  +  " " + yscale( yMap[ActiveSensor[i-1]]) 
+               + "," + "L " + xscale( xMap[ActiveSensor[i]])  +  " " + yscale( yMap[ActiveSensor[i]]) ;
+      
+      debugger;
+      var path = svg.append("path")
+                  .datum(data)
+                  .attr("class", "activityPath")
+                  .attr("fill","none")
+                  .attr("stroke","brown")
+                  .attr("stroke-width", "1px")
+                  .attr("d", valueline);
+
+  
+      // Variable to Hold Total Length
+      var totalLength = path.node().getTotalLength();
+
+      // Set Properties of Dash Array and Dash Offset and initiate Transition
+      path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+      .transition() // Call Transition Method
+        .delay( ((i-1)* 20) +50) 
+        .duration(20) // Set Duration timing (ms)
+        .ease("linear") // Set Easing option
+        .attr("stroke-dashoffset", 0); // Set final value of dash-offset for transition
+
+      };
       });
+
     });
 
 
