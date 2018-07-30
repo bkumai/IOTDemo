@@ -1,26 +1,48 @@
 <!DOCTYPE html>
 <html>
+<title> Bik's Floorplan Test </title>
 <style> 
-   #header {
-    background-color: #39393B;
-    text-align: center;
-    font-size:20px;
-    font-weight: bold;
-    padding: 0px 0px;
-    margin: 0px 0px;
-    color: white;
-
-}
-
-/* #reset #start {   padding:2 px;
-  width: 150px;
  
+ button {   padding:2 px;
+  width: 100px;
+  fill: 'steel-blue';
   font-family: Helvetica, sans-serif;
   font-size: 1em;
 /*  //margin: 0px 0px 10px 0px;
   //border: 2px solid #ccc; */
-}*/
- 
+}
+
+
+    body {
+      font-size: 14px;
+      font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+      margin: 50px auto 20px;
+      width: 720px;
+      background: #fcfcfc;
+      line-height: 1.45em;
+    }
+    
+    a {
+      color: #555;
+    }
+    
+    a:hover {
+      color: #000;
+    }
+    
+    ul {
+      margin: 0 20px;
+      padding: 0;
+    }
+    
+    div.code {
+      border: 1px solid #ccc;
+      background: #eee;
+      margin: 10px 0 10px 0;
+      padding: 10px;
+      width: 720px;
+    }
+    
     .RdYlBu .d6-1 {fill:#c7e9c0;background:#c7e9c0;color:#121212}
     .RdYlBu .d6-2 {fill:#a1d99b;background:#a1d99b;color:#121212}
     .RdYlBu .d6-3 {fill:#74c476;background:#74c476;color:#121212}
@@ -30,71 +52,13 @@
 } </style>
   <head>
    
-    <title>Smart Home Analytics</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
    <script src="https://d3js.org/d3.v3.js"></script> 
-   <script src="data/d3.floorplan.min.js"></script>
-
-
-
-
+   <script src="d3.floorplan.min.js"></script> 
   </head>
-  <body > 
+<body id = 'demo'> 
 
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark"  >
-
-<span class="navbar-text" id = "header">
-    <h4>Smart Home Analytics </h4>
-  </span>
-  <ul class="navbar-nav" style = "font-weight: bold">
-    <li class="nav-item">
-      <a class="nav-link" href="SmartHomeSummary.html">| Summary |</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="ActivityLineChart.html">| Activity Analysis |</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="floorplan_animated.html">| Motion Trajectory |</a>
-    </li>
-        <li class="nav-item">
-      <a class="nav-link" href="Heatmap.html">| Activity Patern |</a>
-    </li>
-  </ul>
-
- </nav>
-  
-  <div class="container" >
-
-  <div class="row">
-  <div class="col-sm-8" id = "demo"> </div>
-  <div class="col-sm-4">
-  
-
-  <div class = "container">
-  <br><br>
-  <button type="button" class="btn btn-primary" id = "start">View 24 hr Trajectory</button>
-  <br><br>
-  <button type="button" class="btn btn-primary" id = "reset">Reset</button>
-  </div>
-
-   </div>
-   
-
-  </div>
-  </div>
-
-</div>
- 
-
-
-  <div class="container" >
-
- </div>
-
+  <button id="start">Play</button>
+  <button id="reset" style="margin-left: 82px">Reset</button>
   
 <script type = 'text/javascript'> 
 
@@ -207,6 +171,31 @@ map: [
 ],
 } };
 
+var MovePoints = [
+   {  
+      "x":47,
+      "y":15
+   },
+   {  
+      "x":7,
+      "y":21
+   },
+   {  
+      "x":15,
+      "y":20
+   },
+   {  
+      "x":36,
+      "y":10
+   },
+     {  
+      "x":13,
+      "y":5
+   },
+
+
+   ]
+ ;
 
  var xscale = d3.scale.linear()
                .domain([0,54.12])
@@ -223,16 +212,16 @@ map: [
     .attr("height", 487).attr("width",720);
    
 
-  mapdata[imagelayer.id()] = [{
+mapdata[imagelayer.id()] = [{
    // url: 'Sample_Floorplan.jpg',
-    url: 'data/FloorPlan_HouseA_Sensor_Removed.jpg',
+    url: 'FloorPlan_HouseA_Sensor_Removed.jpg',
     x: 0,
     y: 0,
     height: 34,
     width: 54.12,
      }];
 
-   map.addLayer(imagelayer)
+map.addLayer(imagelayer)
    .addLayer(heatmap)  
    ;
 
@@ -241,15 +230,15 @@ map: [
   var loadData = function (data) {
   // if(error) console.log("error fetching data");
     mapdata[heatmap.id()] = data.heatmap;
-	  svg.datum(mapdata).call(map);
+	svg.datum(mapdata).call(map);
 }; 
   loadData(jsonData);
 
     ;
 
-   var xMap = [], yMap =  [];
+   var xPoints = [], yPoints = [], xMap = [], yMap =  [];
    
-   d3.tsv("data/SensorMapping.tsv", function(data) {
+   d3.tsv("SensorMapping.tsv", function(data) {
 
     data.forEach( function (d,i) {
 
@@ -260,12 +249,22 @@ map: [
 
   d3.select("#start").on("click", function() {
     svg.select(".heatmap").remove();
-    svg.select("#timer").remove();
-    svg.select("#icon").remove();
 
+    var person = svg.append("image")
+    // .attr("x", xscale(7.4375))
+    // .attr("y", yscale(21.3828125) )
+    // .attr("xlink:href","person2.svg")
+    .attr("height","20px")
+    .attr("width","20px");
+
+    // svg.append("rect")
+    // .attr("height",30)
+    // .attr("width",50)
+    // .attr("x", 20)
+    // .attr("y", 20)
+    // .attr("fill",red); 
 
     var timer = svg.append("text")
-    .attr("id", "timer")
     .attr("height",100)
     .attr("width",100)
     .attr("x", 20)
@@ -279,46 +278,63 @@ map: [
     .delay(50)
     .duration(50) ;
 
+    var t0 = person
+    .transition()
+    .delay(50)
+    .duration(50) ;
 
-    d3.tsv("data/R1_DAY1_SENSOR.tsv", function(data)
-    {
-    //   // path creation 
-      var  valueline = d3.svg.line()
-      .x(function(d) { return xscale (xMap[d.ActiveSensor])  ; })
-      .y(function(d) { return yscale (yMap[d.ActiveSensor])  ; });
+    //  for (i in MovePoints.length) {
       
-       var path = svg.append("path")
-                  .datum(data)
-                  .attr("class", "activityPath")
-                  .attr("fill","none")
-                  .attr("stroke","red")
-                  .attr("stroke-width", "1px")
-                  .attr("d", valueline);
+    //   data = MovePoints[i];
+      
+    //   t0 = t0.transition()
+    //   .duration(1000)
+    //   .attr("x",xscale( function(data) { return +data.x}))
+    //   .attr("y", yscale( function(data) { return +data.y}))
+   
+    // }  ;
 
-  
-    // Variable to Hold Total Length
-    var totalLength = path.node().getTotalLength();
 
-    // Set Properties of Dash Array and Dash Offset and initiate Transition
-    path
-      .attr("stroke-dasharray", totalLength + " " + totalLength)
-      .attr("stroke-dashoffset", totalLength)
-    .transition() // Call Transition Method
-      .duration(2000) // Set Duration timing (ms)
-       //.ease(d3.easeLinearIn) // Set Easing option
-      .attr("stroke-dashoffset", 0); // Set final value of dash-offset for transition
+    d3.tsv("DAY_1_Condensed.tsv", function(data)
+    {
+      data.forEach( function (d,i) { 
+      
+        xPoints[i] = xMap[ d.ActiveSensor]  ;
+        yPoints[i] = yMap[ d.ActiveSensor]  ;
+      }
+     )} );
 
-     
-   });
-    });
 
+    // var xPoints =[47.8125,18.0625,22.3125,23.57421875,42.8984375,18.0625,40.109375,19.390625,23.57];
+    // var yPoints =[15.33984375,4.71484375,23.2421875,15.47265625,16.46875,4.71484375,18.79296875,
+    //               10.625,15.47265625] ;
+    
+
+
+
+    for(i in xPoints){
+    
+    t0 = t0.transition()
+    .duration(1)
+    .attr("x", xscale (xPoints[i]))
+    .attr("y", yscale (yPoints[i]))
+    .attr("xlink:href","person2.svg");
+
+    timer0 = timer0.transition()
+    .duration(1)
+    .text((i/3660).toFixed(2) + " Hours") ;
+
+    };
+   
+
+    // d3.selectAll("image").transition();
+   
+  });
 
   d3.select("#reset").on("click", function(t0) {
      
   
   svg.select(".map-layers").remove();
-  svg.select("#timer").remove();
-    svg.select("#icon").remove();
   loadData(jsonData);
   });
 
