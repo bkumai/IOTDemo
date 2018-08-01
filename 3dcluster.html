@@ -3,23 +3,30 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
 <body>
-<svg width="960" height="500"></svg>
+
+<div id="vis-container">
+<svg width="960" height="600"></svg>
+
+</div>
 <style type="text/css">
-button {
+.tooltip {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    font-size: 12px;
+    width:  auto;
+    height: auto;
+    pointer-events: none;
+    background-color: white;
 }
 </style>
 
 <script>
-    var origin = [480, 300], j = 10, scale = 25,  yLine = [], xGrid = [], beta = 0, alpha = 0, key = function(d){ return d.id; }, startAngle = Math.PI/10 ;
+    var origin = [480, 300], j = 10, scale = 20,  yLine = [], xGrid = [], beta = 0, alpha = 0, key = function(d){ return d.id; }, startAngle = Math.PI/10 ;
    var svg    = d3.select('svg').call(d3.drag().on('drag', dragged).on('start', dragStart).on('end', dragEnd)).append('g');
 
     //var svg    = d3.select('svg');
     //var color  = d3.scaleOrdinal(d3.schemeCategory20);
 
-    var color  = ["dummy","red","blue","green","purple"];
+    var color  = ["dummy","red","blue","green","yellow"];
 
     var mx, my, mouseX, mouseY;
     var scatter = [], accessoryScale, ageScale,happinessScale;
@@ -50,16 +57,16 @@ button {
 
     var accessoryScale = d3.scaleLinear()
                     .domain([0,100])
-                    .range([0,-10]);
+                    .range([-10,9]);
 
 
     var ageScale = d3.scaleLinear()
-                    .domain([0,60])
+                    .domain([0,62])
                     .range([0,-10]);
 
     var happinessScale = d3.scaleLinear()
                     .domain([0,100])
-                    .range([0,-10]);
+                    .range([-10,9]);
 
 
 
@@ -88,6 +95,35 @@ button {
 
     init();
 
+    var tooltip = d3.select("#vis-container").append("div")
+                  .attr("class", "tooltip")
+                  .style("opacity", 0);
+
+
+    // tooltip mouseover event handler
+      var tipMouseover = function(d) {
+          //var color = colorScale(d.manufacturer);
+          var html  = "<span style='color: red, font-size:5'> <b>Accessories:</b>" + round( d.x/100,2) 
+                +"<br><span style='color: red, font-size:5'> <b>Happiness:</b>"   + round( d.z/100,2) 
+                +"<br><span style='color: red, font-size:5'> <b>Est. Age:</b>"   + round( d.y,2) 
+                  "</span>" 
+                      // "<b>" + d.z + "</b> sugar, <b/>" + d.id + "</b> calories";
+
+          tooltip.html(html)
+              .style("left", (d3.event.pageX + 15) + "px")
+              .style("top", (d3.event.pageY - 28) + "px")
+            .transition()
+              .duration(200) // ms
+              .style("opacity", .9) // started as 0!
+
+      };
+      // tooltip mouseout event handler
+      var tipMouseout = function(d) {
+          tooltip.transition()
+              .duration(300) // ms
+              .style("opacity", 0); // don't care about position!
+      };
+
     function processData(data, tt){
 
         /* ----------- GRID ----------- */
@@ -115,18 +151,14 @@ button {
             .enter()
             .append('circle')
             .attr('class', '_3d')
-            .attr('opacity', 0)
-            .attr('cx', posPointX)
-            .attr('cy', posPointY)
-            .merge(points)
-            .transition().duration(tt)
             .attr('r', 3)
             .attr('stroke', function(d){ return d3.color("black"); })
             .attr('fill', function(d){ return color[d.color_id]; })
-            //.attr('fill', function(d){ return d3.color("red"); })
             .attr('opacity', 1)
             .attr('cx', posPointX)
-            .attr('cy', posPointY);
+            .attr('cy', posPointY)
+            .on("mouseover", tipMouseover)
+            .on("mouseout", tipMouseout);
 
         points.exit().remove();
 
@@ -220,6 +252,8 @@ button {
         mouseY = d3.event.y - my + mouseY;
     }
 
-    
+    function round(value, decimals) {
+  return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+}
 </script>
 </body>
