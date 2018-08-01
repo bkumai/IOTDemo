@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- <script src="js/plotly-latest.min.js"> -->
+
+</head>
+<body>
+<!-- Plotly chart will be drawn inside this DIV -->
+<div id="myDiv" style="width:100%;height:100%"></div>
+<script>
+
+Plotly.d3.csv('data/cluster_output.csv', function(err, rows){
+
+    function unpack(rows, key) {
+        return rows.map(function(row) { return row[key]; });
+    }
+
+    var data = [{
+        x: unpack(rows, 'Accessories'),
+        y: unpack(rows, 'Happiness'),
+        z: unpack(rows, 'Age'),
+        mode: 'markers',
+        type: 'scatter3d',
+        marker: {
+          color: 'rgb(23, 190, 207)',
+          size: 2
+        }
+    },{
+        alphahull: 7,
+        opacity: 0.1,
+        type: 'mesh3d',
+        x: unpack(rows, 'Accessories'),
+        y: unpack(rows, 'Happiness'),
+        z: unpack(rows, 'Age')
+    }];
+
+    var layout = {
+        autosize: true,
+        height: 550,
+        scene: {
+            aspectratio: {
+                x: 1,
+                y: 1,
+                z: 1
+            },
+            camera: {
+                center: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                eye: {
+                    x: 1.25,
+                    y: 1.25,
+                    z: 1.25
+                },
+                up: {
+                    x: 0,
+                    y: 0,
+                    z: 1
+                }
+            },
+            xaxis: {
+                title: 'Accessories',
+                type: 'linear',
+                zeroline: false
+            },
+            yaxis: {
+                title: 'Happiness',
+                type: 'linear',
+                zeroline: false
+            },
+            zaxis: {
+                 title: 'Age',
+                type: 'linear',
+                zeroline: false
+            }
+        },
+        title: '3d point clustering',
+        width: 600
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+});
+
+
+</script>
+</body>
