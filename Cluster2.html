@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="js/plotly-latest.min.js"></script>
+
+</head>
+<body>
+<!-- Plotly chart will be drawn inside this DIV -->
+<div id="myDiv" style="width:100%;height:100%"></div>
+<script>
+
+Plotly.d3.csv('data/cluster_output_pca.csv', function(err, rows){
+
+    function unpack(rows, key) {
+        return rows.map(function(row) { return row[key]; });
+    }
+
+    var data = [{
+        x: unpack(rows, 'PCA-X'),
+        y: unpack(rows, 'PCA-Y'),
+        z: unpack(rows, 'PCA-Z'),
+        mode: 'markers',
+        type: 'scatter3d',
+        marker: {
+          color: 'rgb(23, 190, 207)',
+          size: 2
+        }
+    },{
+        alphahull: 7,
+        opacity: 0.1,
+        type: 'mesh3d',
+        x: unpack(rows, 'PCA1'),
+        y: unpack(rows, 'PCA2'),
+        z: unpack(rows, 'PCA3')
+    }];
+
+    var layout = {
+        autosize: true,
+        height: 550,
+        scene: {
+            aspectratio: {
+                x: 1,
+                y: 1,
+                z: 1
+            },
+            camera: {
+                center: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                eye: {
+                    x: 1.25,
+                    y: 1.25,
+                    z: 1.25
+                },
+                up: {
+                    x: 0,
+                    y: 0,
+                    z: 1
+                }
+            },
+            xaxis: {
+                title: 'PCA1',
+                type: 'linear',
+                zeroline: false
+            },
+            yaxis: {
+                title: 'PCA2',
+                type: 'linear',
+                zeroline: false
+            },
+            zaxis: {
+                 title: 'PCA3',
+                type: 'linear',
+                zeroline: false
+            }
+        },
+        title: 'PCA point clustering',
+        width: 600
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+});
+
+
+</script>
+</body>
