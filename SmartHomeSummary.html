@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+  
+  #header {
+    background-color: #39393B;
+    text-align: center;
+    font-size:20px;
+    font-weight: bold;
+    padding: 0px 0px;
+    margin: 0px 0px;
+    color: white;
+
+}
+
+</style>
+<head>
+  <title>Smart Home Analytics</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/crossfilter.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "css/dc.css"/>
+    <script src = "js/dc.min.js"></script>
+
+  </head>
+<body>
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark"  >
+
+<span class="navbar-text" id = "header">
+    <h4>Smart Home Analytics </h4>
+  </span>
+  <!-- Links -->
+  <ul class="navbar-nav" style = "font-weight: bold">
+    <li class="nav-item">
+      <a class="nav-link" href="SmartHomeSummary.html">| Summary |</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="ActivityLineChart.html">| Activity Analysis |</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="floorplan_animated.html">| Motion Trajectory |</a>
+    </li>
+        <li class="nav-item">
+      <a class="nav-link" href="Heatmap.html">| Activity Patern |</a>
+    </li>
+  </ul>
+
+ </nav>
+
+ <div class="container-fluid">
+     <div class="row  align-items-center justify-content-center">
+        <div class="col-lg-9" >
+          <div class="row align-items-center justify-content-center" ><h6>Activity Time Use Summary</h6></div>
+          <div class="row align-items-center justify-content-center" id = "activityChart" ></div>
+          <div class="row align-items-center justify-content-center" id = "dateRangeChart"></div>
+           <div class = "row align-items-center justify-content-center" id = "timeRangeChart" style ="height:100"></div>   
+        </div>
+        <div class="col-sm-2" >
+            <div class = "row  align-items-center justify-content-center" >
+            <a href = "javascript:dc.filterAll(); dc.renderAll();" ><h6>   Reset All</h6></a>
+            </div>
+             <div class = "row align-items-center justify-content-center" id ="house"> <h6> House</h6> </div>   
+            <div class = "row align-items-center justify-content-center" id = "resident"><h6> Resident</h6></div>   
+            <div class = "row align-items-center justify-content-center" id = "dayofweek"><h6> Day of Week</h6></div>   
+
+        </div>   
+        </div>
+
+  </div>
+
+   <script type="text/javascript">
+  
+        var dateRangeChart = dc.barChart('#dateRangeChart'); // , 'myChartGroup');
+        var timeRangeChart = dc.barChart('#timeRangeChart'); 
+        var barChart = dc.barChart('#activityChart'); // , 'myChartGroup');
+        var pieChartHouse = dc.pieChart('#house'); //, 'myChartGroup');
+         var pieChartResident = dc.pieChart('#resident');
+         var pieChartDayofWeek = dc.pieChart('#dayofweek');
+
+         d3.csv("data/ARAS_Activity_Hourly_Data.csv", function(errors, ARAS_Activity) {
+            
+            var dayofWeek = ["Sun","Mon","Tue","Wed","Thur","Fri","Sat"] ;
+            var ActivityName = ["0","Going Out","Sleep","Internet","TV","Study","Other","Food","Cleaning","Leisure","Hygiene"] ;
+       
+            ARAS_Activity.forEach(function(data) {
+            data.date = parseDate( date_convert(data.Day) );
+            data.activityduration = data.ActivityMinutes ;
+            data.dayofWeek = dayofWeek[data.date.getDay() ];
+            data.Activity = ActivityName[ data.Activity ]  ;// Use Names instead of code 
+            data.Hour = parseTime ( time_convert_hour( data.Hour));
+            data.Resident = data.House + data.Resident;
+           }); 
+
+            var mycrossfilter = crossfilter(ARAS_Activity);
+
+           // House dimension
+            var houseDimension = mycrossfilter.dimension(function(data) { 
+               return data.House ;
+            });
+            var houseGroup = houseDimension.group();
+
+//            Resident dimension
+            var residentDimension = mycrossfilter.dimension(function(data) { 
+               return data.Resident; 
+            });
+            var residentGroup = residentDimension.group();
+
+         
+         // Day dimension
+            var dayDimension = mycrossfilter.dimension(function(data) { 
+               return data.date ;
+            });
+            var dayGroup = dayDimension.group() ;
+
+            // Activity dimension
+            var activityDimension = mycrossfilter.dimension(function(data) { 
+               return data.Activity; 
+            });
+            var activityGroup = activityDimension.group().reduceSum( function(d){ return d.activityduration/60;});;
+
+                     // DayofWeek dimension
+            var dayofweekDimension = mycrossfilter.dimension(function(data) { 
+               return data.dayofWeek ;
+            });
+            var dayofweekGroup = dayofweekDimension.group() ;
+
+                     // Time of day 
+            var timeofdayDimension = mycrossfilter.dimension(function(data) { 
+               return data.Hour ;
+            });
+            var timeofdayGroup = timeofdayDimension.group() ;
+
+
+
+         barChart
+            .width(850)
+            .height(330)
+            .x(d3.scaleBand() )
+            .xUnits(dc.units.ordinal)
+            .yAxisLabel("Total Hours")
+            .elasticY(true)
+            .elasticX(true)
+            .dimension(activityDimension)
+            .group(activityGroup);
+
+         var minDate = dayDimension.bottom(1)[0].date;
+         var maxDate = dayDimension.top(1)[0].date; 
+         var numberofTicks = (maxDate-minDate)/(24*60*60*1000) +1   // convert time to miliseconds and find days elapsed. No of ticks is a multiple of 30  
+
+
+         dateRangeChart
+            .width(850)
+            .height(70)
+            .x(d3.scaleTime().domain([minDate,maxDate]))
+            .ordinalColors( ["white"]  )
+            .xAxisLabel( "select date range")
+            .elasticX(true)
+            .dimension(dayDimension)
+            .group(dayGroup)
+            .yAxis().ticks(0);
+
+         //s dateRangeChart.xAxis().ticks(0)
+           
+                       // var xscale = d3.scaleTime()
+            //     .domain( [parseTime( time_convert(0)),parseTime( time_convert(1440))] )
+            //     .range([0, width]);
+
+         timeRangeChart
+            .width(850)
+            .height(70)
+            .x(d3.scaleTime().domain([timeofdayDimension.bottom(1)[0].Hour, timeofdayDimension.bottom(1)[0].Hour]))
+            .ordinalColors( ["white"]  )
+            .xAxisLabel( "select time of day range")
+            .elasticX(true)
+            .dimension(timeofdayDimension)
+            .group(timeofdayGroup)
+            .yAxis().ticks(0)
+           ;
+
+           timeRangeChart.xAxis().ticks(12).tickFormat(d3.timeFormat("%I %p"));
+
+         pieChartResident
+            .width(250)
+            .height(140)
+            .innerRadius(30)
+            .dimension(residentDimension)
+            .group(residentGroup);
+
+
+         pieChartHouse
+            .width(250)
+            .height(140)
+            .innerRadius(30)
+            .dimension(houseDimension)
+            .group(houseGroup);
+
+
+         pieChartDayofWeek
+            .width(250)
+            .height(140)
+            .innerRadius(30)
+            .dimension(dayofweekDimension)
+            .group(dayofweekGroup);
+
+         // pieChartResident.render();
+          dc.renderAll();
+      });
+
+        var parseDate = d3.timeParse("%Y%m%d") ;
+        
+
+        var parseTime = d3.timeParse("%H:%M");
+
+        function time_convert_minute( minute)
+          { 
+           const hours = Math.floor(minute / 60);  
+           const minutes = minute % 60;
+           return `${hours}:${minutes}`;         
+         };
+
+          function time_convert_hour( hour)
+          { 
+           const hours = hour;  
+           const minutes = 0;
+           return `${hours}:${minutes}`;         
+         };
+
+         function date_convert(day)
+          { 
+           const date = "201804"+day;
+           return `${date}`;         
+         };
+
+
+
+     
+  </script>
+</div>
+
+
+</body>
+</html>
