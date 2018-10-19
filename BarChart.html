@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Asset Locations</title>
+ 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/crossfilter.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "css/dc.css"/>
+    <script src = "js/dc.min.js"></script>
+
+</head>
+
+<body>
+ <div class="container-fluid">
+   <div class="row  align-items-center justify-content-center">
+        <div class="col-lg-7" >
+          <div class="row align-items-center justify-content-center" ><h6>Asset count by Type</h6></div>
+          <div class="row align-items-center justify-content-center" id = "assetBarChart" ></div>
+
+        </div>
+        <div class="col-sm-2" >
+            <div class = "row  align-items-center justify-content-center" >
+            <!-- <a href = "javascript:dc.filterAll(); dc.renderAll();" ><h6>   Reset All</h6></a> -->
+            </div>
+             <div class = "row align-items-center justify-content-center" id ="customer"> <h6> Customer</h6> </div>   
+<!--             <div class = "row align-items-center justify-content-center" id = "resident"><h6> Resident</h6></div>   
+            <div class = "row align-items-center justify-content-center" id = "dayofweek"><h6> Day of Week</h6></div>    -->
+
+        </div>   
+        </div>
+
+
+<script type="text/javascript">
+
+var barChart = dc.barChart('#assetBarChart'); // , 'myChartGroup');
+var pieCustomer = dc.pieChart('#customer'); //, 'myChartGroup');
+var assetTable = dc.dataTable('#assetTable')
+//var pieType = dc.pieChart('#type');
+
+
+d3.csv("data/asset_demo.csv", function(errors, asset) {
+
+    //Create Cross filter, dimensions and groups
+	var mycrossfilter = crossfilter(asset);
+
+	var customerDimension = mycrossfilter.dimension(function(data) { 
+	     return data.Customer ;
+	});
+
+	var customerGroup = customerDimension.group();
+
+	var typeDimension = mycrossfilter.dimension(function(data) { 
+	     return data.Type ;
+	});
+
+	var typeGroup = typeDimension.group()
+
+
+// draw bar chart 
+
+	barChart
+    .width(850)
+    .height(330)
+    .x(d3.scaleBand() )
+    .xUnits(dc.units.ordinal)
+    .yAxisLabel("Number of Assets")
+    .xAxisLabel("Asset types")
+    .elasticY(true)
+    .elasticX(true)
+    .dimension(typeDimension)
+    .group(typeGroup)
+    .gap(100);
+
+
+    // assetTable
+    // .dimension(typeDimension)
+    // .group(function(d){ return d.Type})
+    // .columns(
+  		// // [function(d) { return d.Name; },
+    // // 	function(d) { return d.Type; },
+    // // 	function(d) { return d.Location; },
+    // //   	function(d) { return d.Customer; }]
+    // //   	)
+
+
+    // 	['Name','Type','Location','Customer'])
+
+
+	 // pieType
+		// .width(250)
+		// .height(140)
+		// .innerRadius(30)
+		// .dimension(typeDimension)
+		// .group(typeGroup);
+
+	pieCustomer
+		.width(350)
+		.height(250)
+		.innerRadius(30)
+		.dimension(customerDimension)
+		.group(customerGroup);
+
+    dc.renderAll();
+
+
+});
+
+
+
+</script>
+</body>
