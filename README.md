@@ -5,4 +5,5 @@ Data Source: ARAS (Activity Recognition with Ambient Sensing)  - https://ieeexpl
 
 All code written in JavaScript using D3.JS, DC.JS libaries 
 
-https://bkumai.github.io/IOTDemo/BarChart.html
+HOME Page: 
+https://bkumai.github.io/IOTDemo/SmartHomeSummary.html
